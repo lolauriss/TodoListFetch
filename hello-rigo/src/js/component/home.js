@@ -81,19 +81,19 @@ export class Home extends React.Component {
 				</form>
 				<ul>
 					{this.state.tareas.map((item, index) => (
-						<li key={index}> {item} </li>
-					))}
-					{this.state.tareas.map((tarea, index) => {
-						return (
-							<li
+						<li key={index}>
+							{" "}
+							{item}{" "}
+							<button
+								id="tareas"
 								onClick={e => {
 									this.removeTodo(index);
-								}}
-								key={tarea}>
+								}}>
+								{" "}
 								&times;
-							</li>
-						);
-					})}
+							</button>
+						</li>
+					))}
 				</ul>
 			</div>
 		);
