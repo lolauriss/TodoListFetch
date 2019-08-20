@@ -12,12 +12,17 @@ export class Home extends React.Component {
 		super();
 
 		this.state = {
+			users: [],
+			user: "",
 			tareas: [],
 			tarea: ""
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.removeTodo = this.removeTodo.bind(this);
+		this.handleUser = this.handleUser.bind(this);
+		this.handleUserSubmit = this.handleUserSubmit.bind(this);
+		this.handleFetch = this.handleFetch.bind(this);
 	}
 
 	handleChange(e) {
@@ -30,30 +35,34 @@ export class Home extends React.Component {
 			tarea: ""
 		});
 	}
-	removeTodo(index) {
-		let { tareas } = this.state;
-		tareas.splice(index, 1);
-		this.setState({
-			tareas: tareas
-		});
+	handleUser(e) {
+		this.setState({ user: e.target.value });
 	}
-	componentDidMount() {
-		const tareas = this.state.tareas;
-		fetch("http://assets.breatheco.de/apis/fake/todos/user/lolauriss", {
+	handleUserSubmit(e) {
+		e.preventDefault();
+		this.setState({
+			users: this.state.users.concat(this.state.user),
+			user: ""
+		});
+		console.log("usuario", this.state.user);
+		console.log("usuarios", this.state.users);
+		this.handleFetch(this.state.user);
+	}
+	handleFetch(user) {
+		fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
 			method: "GET",
-			body: JSON.stringify(tareas),
 			headers: {
 				"Content-Type": "application/json"
 			}
 		})
-			.then(resp => {
-				console.log(resp.ok); // will be true if the response is successfull
-				console.log(resp.status); // the status code = 200 or code = 400 etc.
-				console.log(resp.text()); // will try return the exact result as string
-				return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-			})
+			.then(resp => resp.json()) // (returns promise) will try to parse the result as json as return a promise that you can .then for results
 			.then(data => {
 				//here is were your code should start after the fetch finishes
+                if(data.length >= 0){
+
+                }else{
+                    
+                }
 				console.log(data); //this will print on the console the exact object received from the server
 			})
 			.catch(error => {
@@ -61,11 +70,36 @@ export class Home extends React.Component {
 				console.log(error);
 			});
 	}
+
+	removeTodo(index) {
+		let { tareas } = this.state;
+		tareas.splice(index, 1);
+		this.setState({
+			tareas: tareas
+		});
+	}
+	componentDidMount(user) {
+		const tareas = this.state.tareas;
+	}
 	render() {
 		return (
 			<div>
-				<form id="addToDo" onSubmit={this.handleSubmit}>
+				<form id="addUser" onSubmit={this.handleUserSubmit}>
 					<h1>todos</h1>
+					<input
+						placeholder={
+							this.state.users.length > 0
+								? "Add a user"
+								: "No user, add a user"
+						}
+						type="text"
+						value={this.state.user}
+						name="tarea"
+						onChange={this.handleUser}
+					/>
+					<button>User</button>
+				</form>
+				<form id="addToDo" onSubmit={this.handleSubmit}>
 					<input
 						placeholder={
 							this.state.tareas.length > 0
@@ -83,15 +117,14 @@ export class Home extends React.Component {
 					{this.state.tareas.map((item, index) => (
 						<li key={index}>
 							{" "}
-							{item}{" "}
-							<button
+							{item}
+							<i
 								id="tareas"
 								onClick={e => {
 									this.removeTodo(index);
 								}}>
-								{" "}
 								&times;
-							</button>
+							</i>
 						</li>
 					))}
 				</ul>
