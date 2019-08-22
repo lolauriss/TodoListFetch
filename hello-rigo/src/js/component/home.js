@@ -31,9 +31,9 @@ export class Home extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 		this.setState({
-			tareas: this.state.tareas.concat(this.state.tarea),
-			tarea: ""
+			tareas: this.state.tareas.concat(this.state.tarea)
 		});
+		this.handleFetch();
 	}
 	handleUser(e) {
 		this.setState({ user: e.target.value });
@@ -48,27 +48,38 @@ export class Home extends React.Component {
 		console.log("usuarios", this.state.users);
 		this.handleFetch(this.state.user);
 	}
-	handleFetch(user) {
-		fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
-			method: "GET",
+	handleFetch() {
+		let todos = this.setData();
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/laura", {
+			method: "put",
 			headers: {
 				"Content-Type": "application/json"
-			}
+			},
+			body: JSON.parse(todos)
 		})
 			.then(resp => resp.json()) // (returns promise) will try to parse the result as json as return a promise that you can .then for results
 			.then(data => {
 				//here is were your code should start after the fetch finishes
-                if(data.length >= 0){
-
-                }else{
-                    
-                }
+				if (data.length >= 0) {
+					console.log("hola");
+				} else {
+					console.log("hola");
+				}
 				console.log(data); //this will print on the console the exact object received from the server
 			})
 			.catch(error => {
 				//error handling
 				console.log(error);
 			});
+	}
+
+	setData() {
+		let todos = this.state.tareas;
+		let newTodos = todos.map(function(item) {
+			return { label: item, done: false };
+		});
+		console.log(newTodos);
+		return newTodos;
 	}
 
 	removeTodo(index) {
@@ -111,7 +122,7 @@ export class Home extends React.Component {
 						name="tarea"
 						onChange={this.handleChange}
 					/>
-					<button>Add</button>
+					<button onClick={this.handleSubmit}>Add</button>
 				</form>
 				<ul>
 					{this.state.tareas.map((item, index) => (
