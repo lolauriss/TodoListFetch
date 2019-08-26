@@ -55,7 +55,7 @@ export class Home extends React.Component {
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.parse(todos)
+			body: JSON.stringify(newTodos)
 		})
 			.then(resp => resp.json()) // (returns promise) will try to parse the result as json as return a promise that you can .then for results
 			.then(data => {
